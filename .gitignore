@@ -1,0 +1,34 @@
+# ---- Go ----
+**/bin/
+**/dist/
+**/*.exe
+**/*.out
+**/*.test
+**/coverage.out
+
+# Go build cache (optional)
+**/.cache/
+
+# ---- Node / Vite / React ----
+**/node_modules/
+**/dist/
+**/.vite/
+**/.eslintcache
+
+# ---- Env files / secrets ----
+**/.env
+**/.env.*
+!.env.example
+
+# ---- OS / editor ----
+**/.DS_Store
+**/Thumbs.db
+**/.vscode/
+**/.idea/
+
+# ---- Uploads / local storage ----
+gochat-api/uploads/
+**/uploads/
+
+# ---- Logs ----
+**/*.log

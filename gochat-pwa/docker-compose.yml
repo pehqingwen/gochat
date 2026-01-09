@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:16
+    container_name: gochat-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gochat
+      POSTGRES_USER: gochat
+      POSTGRES_PASSWORD: gochat_pw
+    ports:
+      - "5432:5432"
+    volumes:
+      - gochat_pgdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:latest
+    container_name: gochat-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+
+volumes:
+  gochat_pgdata:
