@@ -18,7 +18,7 @@ A lightweight real-time group chat app built to showcase backend + realtime syst
 - ✅ Presence + idle/away status (active → idle after inactivity)
 - ✅ File uploads (PDF/images): upload via HTTP, share via chat message (other users can download)
 - ✅ Message history persisted in Postgres (includes attachment metadata)
-
+🚀 Feature added: Room Video Call — real-time group video calling inside each chat room (WebRTC), including screen sharing support.
 
 ---
 
