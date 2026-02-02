@@ -1,19 +1,19 @@
 import { getToken } from "./auth";
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
+
 export async function uploadFile(file) {
+  const token = getToken();
+
   const fd = new FormData();
   fd.append("file", file);
 
-  const res = await fetch("http://localhost:8080/upload", {
+  const res = await fetch(`${API_BASE}/upload`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-      // DO NOT set Content-Type when using FormData
-    },
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: fd,
   });
 
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Upload failed");
-  return data; // { url, mime, size, filename }
+  if (!res.ok) throw new Error((await res.text()) || "upload failed");
+  return await res.json();
 }

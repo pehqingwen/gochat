@@ -125,6 +125,10 @@ export default function Rooms() {
           </div>
         </div>
 
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <Link to="/starred" style={{ textDecoration: "none" }}>⭐ Starred</Link>
+        </div>
+
         <button
           onClick={joinRoomPrompt}
           style={{ padding: "10px 12px", borderRadius: 12, border: "1px solid #ddd", cursor: "pointer" }}
@@ -165,7 +169,7 @@ export default function Rooms() {
         ) : (
           listToShow.map((r) => (
             <div
-              key={r.id}
+              key={r.id} className="roomItem"
               style={{
                 padding: 14,
                 borderRadius: 14,
@@ -182,14 +186,39 @@ export default function Rooms() {
               >
                 <div style={{ fontWeight: 600 }}>{r.name}</div>
                 <div style={{ fontSize: 12, opacity: 0.7 }}>Room ID: {r.id}</div>
+
+
+                {/* Unread badge */}
+                {(r.unreadCount || 0) > 0 ? (
+                  <span
+                    title={`${r.unreadCount} unread`}
+                    style={{
+                      minWidth: 22,
+                      height: 22,
+                      padding: "0 8px",
+                      borderRadius: 999,
+                      background: "#e11d48",
+                      color: "white",
+                      fontSize: 12,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {r.unreadCount}
+                  </span>
+                ) : null}
+
               </Link>
 
               {/* Delete only for DB rooms created by user */}
               {page === "mine" && r.is_owner ? (
                 <button
                   onClick={async () => {
-                    if (!confirm(`Delete room "${r.name}"?`)) return;
+                    if (!confirm(`Delete room "${r.name}"?\n\nThis will remove the room for everyone.`)) return;
                     await http(`/rooms/${r.id}`, { method: "DELETE" });
+                    alert(`Room "${r.name}" deleted. It is removed for everyone.`);
                     await refreshRooms();
                   }}
                   style={{
@@ -202,6 +231,29 @@ export default function Rooms() {
                   Delete
                 </button>
               ) : null}
+
+
+              {/* Leave only for joined rooms (not owner) */}
+              {page !== "mine" && !r.is_owner ? (
+                <button
+                  onClick={async () => {
+                    if (!confirm(`Leave room "${r.name}"?`)) return;
+                    await http(`/rooms/${r.id}/leave`, { method: "POST" });
+                    await refreshRooms();
+                  }}
+                  style={{
+                    padding: "8px 10px",
+                    borderRadius: 10,
+                    border: "1px solid #ddd",
+                    cursor: "pointer",
+                    background: "white",
+                  }}
+                >
+                  Leave
+                </button>
+              ) : null}
+
+
             </div>
           ))
         )}

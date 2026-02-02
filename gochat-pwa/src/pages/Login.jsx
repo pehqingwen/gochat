@@ -19,28 +19,34 @@ export default function Login() {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-      setToken(res.token);
+      const token = res?.token;
+      if (!token) throw new Error("register succeeded but no token returned");
+      setToken(token);
+      localStorage.setItem("gochat_token", token);
       navigate("/rooms");
     } catch (e) {
-      setErr(e.message || "Register failed");
+      setErr(e?.message || "Register failed");
     } finally {
       setLoading(false);
     }
   }
 
-  async function doLogin(e) {
+  async function onLogin(e) {
     e.preventDefault();
     setErr("");
     setLoading(true);
     try {
-      const res = await http("/auth/login", {
+      const data = await http("/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-      setToken(res.token);
+      const token = data?.token;
+      if (!token) throw new Error("login succeeded but no token returned");
+      setToken(token);
+      localStorage.setItem("gochat_token", token);
       navigate("/rooms");
     } catch (e) {
-      setErr(e.message || "Login failed");
+      setErr(e?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -50,7 +56,7 @@ export default function Login() {
     <div style={{ maxWidth: 420, margin: "60px auto", padding: 16 }}>
       <h2 style={{ marginBottom: 8 }}>GoChat</h2>
 
-      <form style={{ display: "grid", gap: 10 }}>
+      <form onSubmit={onLogin} style={{ display: "grid", gap: 10 }}>
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -71,6 +77,7 @@ export default function Login() {
 
         <div style={{ display: "flex", gap: 8 }}>
           <button
+            type="button"
             onClick={doRegister}
             disabled={loading}
             style={{ flex: 1, padding: "12px 14px", borderRadius: 12, border: "1px solid #ddd", cursor: "pointer" }}
@@ -79,7 +86,7 @@ export default function Login() {
           </button>
 
           <button
-            onClick={doLogin}
+            type="submit"
             disabled={loading}
             style={{ flex: 1, padding: "12px 14px", borderRadius: 12, border: "1px solid #ddd", cursor: "pointer" }}
           >
